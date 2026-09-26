@@ -10,7 +10,7 @@ _show_hint() {
         return
     fi
     
-    local matches=$(grep "^${cmd}|" "$db_file")
+    local matches=$(grep -i "${cmd}|" "$db_file" | head -n 3)
     
     if [[ -n "$matches" ]]; then
         echo "$matches" | while IFS='|' read -r db_cmd db_syntax db_desc; do
