@@ -17,3 +17,12 @@ git clone https://github.com/madharmohammad18-cpu/bash-syntax-hinter.git
 cd bash-syntax-hinter
 chmod +x install.sh
 ./install.sh
+```
+## How to Update
+To get the latest features (like fuzzy search), run these commands:
+
+```bash
+cd bash-syntax-hinter
+git pull
+./install.sh
+```
