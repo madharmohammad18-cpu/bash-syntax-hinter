@@ -26,3 +26,18 @@ cd bash-syntax-hinter
 git pull
 ./install.sh
 ```
+## 🖥️ Desktop GUI Manager
+
+Managing your hints is easy with the included Python graphical interface. You can view, add, and delete command hints visually without editing the raw text file.
+
+### Prerequisites (Ubuntu/Debian)
+The GUI uses Tkinter, which may not be installed by default on Linux. Install it using:
+```bash
+sudo apt update
+sudo apt install python3-tk
+```
+### Running the Manager
+To launch the desktop window, run the following command from your terminal:
+```bash
+python3 ~/bash-syntax-hinter/hinter_gui.py
+```
