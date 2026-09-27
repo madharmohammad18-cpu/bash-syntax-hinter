@@ -2,26 +2,30 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import os
 
-# Define the absolute path to the database
 DB_FILE = os.path.expanduser("~/.bash_hints.txt")
 
-def load_hints():
-    """Reads the text file and populates the table."""
-    # Clear existing data in the table
+def load_hints(search_query=""):
+    """Reads the text file and populates the table, applying an optional search filter."""
     for row in tree.get_children():
         tree.delete(row)
         
-    # Create file if it doesn't exist
     if not os.path.exists(DB_FILE):
         open(DB_FILE, 'a').close()
         return
 
-    # Read and insert data
+    query = search_query.lower()
+
     with open(DB_FILE, "r") as f:
         for line in f:
             if "|" in line:
                 cmd, syntax, desc = line.strip().split("|", 2)
-                tree.insert("", tk.END, values=(cmd, syntax, desc))
+                # If search query is empty OR if it matches any of the fields, insert it
+                if not query or query in cmd.lower() or query in syntax.lower() or query in desc.lower():
+                    tree.insert("", tk.END, values=(cmd, syntax, desc))
+
+def search_hints(event):
+    """Triggers the load_hints function whenever a key is pressed in the search bar."""
+    load_hints(search_entry.get())
 
 def add_hint():
     """Appends a new hint to the text file and updates the table."""
@@ -33,14 +37,15 @@ def add_hint():
         messagebox.showwarning("Input Error", "All fields are required!")
         return
         
-    # Append to file
     with open(DB_FILE, "a") as f:
         f.write(f"{cmd}|{syntax}|{desc}\n")
         
-    # Clear input boxes and reload table
     cmd_entry.delete(0, tk.END)
     syntax_entry.delete(0, tk.END)
     desc_entry.delete(0, tk.END)
+    
+    # Clear the search bar and reload everything so the new hint is visible
+    search_entry.delete(0, tk.END)
     load_hints()
 
 def delete_hint():
@@ -50,11 +55,9 @@ def delete_hint():
         messagebox.showwarning("Selection Error", "Please select a hint to delete.")
         return
         
-    # Get values of the selected row
     values = tree.item(selected_item[0], "values")
     target_line = f"{values[0]}|{values[1]}|{values[2]}\n"
     
-    # Read all lines, filter out the target, and rewrite the file
     with open(DB_FILE, "r") as f:
         lines = f.readlines()
         
@@ -63,16 +66,25 @@ def delete_hint():
             if line != target_line:
                 f.write(line)
                 
-    load_hints()
+    load_hints(search_entry.get())
 
 # Set up the main application window
 root = tk.Tk()
 root.title("Bash Syntax Hinter Manager")
-root.geometry("800x500")
+root.geometry("800x550")
 
 # --- UI Layout ---
 
-# Input Frame (Top)
+# Search Frame (Top)
+search_frame = tk.Frame(root, pady=10)
+search_frame.pack(fill=tk.X, padx=20)
+tk.Label(search_frame, text="🔍 Search:", font=("Arial", 10, "bold")).pack(side=tk.LEFT)
+search_entry = tk.Entry(search_frame)
+search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
+# Bind every key release to the search_hints function
+search_entry.bind("<KeyRelease>", search_hints)
+
+# Input Frame 
 input_frame = tk.Frame(root, pady=10)
 input_frame.pack(fill=tk.X, padx=20)
 
@@ -98,7 +110,6 @@ tk.Button(btn_frame, text="Delete Selected", command=delete_hint, bg="lightcoral
 table_frame = tk.Frame(root)
 table_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)
 
-# Treeview (Table)
 columns = ("Command", "Syntax", "Description")
 tree = ttk.Treeview(table_frame, columns=columns, show="headings")
 tree.heading("Command", text="Command")
@@ -109,14 +120,10 @@ tree.column("Command", width=120)
 tree.column("Syntax", width=250)
 tree.column("Description", width=380)
 
-# Scrollbar for the table
 scrollbar = ttk.Scrollbar(table_frame, orient=tk.VERTICAL, command=tree.yview)
 tree.configure(yscroll=scrollbar.set)
 scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-# Load data on startup
 load_hints()
-
-# Run the application
 root.mainloop()
