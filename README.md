@@ -41,3 +41,20 @@ To launch the desktop window, run the following command from your terminal:
 ```bash
 python3 ~/bash-syntax-hinter/hinter_gui.py
 ```
+# Bash Syntax Hinter
+
+A lightweight, plug-and-play syntax hinter and cheat sheet for Bash commands. It features a fast graphical interface that bridges the gap between your terminal workflow and desktop environment.
+
+## Features
+* **Smart Launch Hotkey:** Highlight any command in your terminal, press `Ctrl + Alt + H`, and a GUI will instantly pop up with the correct syntax and description.
+* **Automated Setup:** The installer automatically configures dependencies (`xclip`), permissions, and GNOME system-wide hotkeys.
+* **Terminal Friendly:** Works alongside strictly terminal-based editors like `nano` without interrupting your workflow.
+
+## Installation
+Clone the repository and run the automated installer. The script will handle all configuration automatically.
+
+```bash
+git clone [https://github.com/yourusername/bash-syntax-hinter.git](https://github.com/yourusername/bash-syntax-hinter.git)
+cd bash-syntax-hinter
+./install.sh
+```
