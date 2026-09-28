@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import os
+import sys
 
 DB_FILE = os.path.expanduser("~/.bash_hints.txt")
 
@@ -125,5 +126,8 @@ tree.configure(yscroll=scrollbar.set)
 scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-load_hints()
+# Grab the injected search word (if one exists) and load the table
+initial_search = sys.argv[1] if len(sys.argv) > 1 else ""
+search_entry.insert(0, initial_search)
+load_hints(initial_search)
 root.mainloop()
