@@ -25,7 +25,7 @@ if ! grep -q "source $USER_LIB_FILE" "$BASHRC_FILE"; then
     echo "✔️  Added tool to .bashrc."
 fi
 echo "Installing xclip for smart terminal launching..."
-sudo apt-get install -y xclip
+sudo apt-get install -y xclip python3-tk
 
 echo "Configuring smart launcher..."
 chmod +x "$HOME/bash-syntax-hinter/smart_launch.sh"

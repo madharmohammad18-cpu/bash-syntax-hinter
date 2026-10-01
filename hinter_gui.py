@@ -9,7 +9,7 @@ def load_hints(search_query=""):
     """Reads the text file and populates the table, applying an optional search filter."""
     for row in tree.get_children():
         tree.delete(row)
-        
+
     if not os.path.exists(DB_FILE):
         open(DB_FILE, 'a').close()
         return
@@ -33,18 +33,18 @@ def add_hint():
     cmd = cmd_entry.get().strip()
     syntax = syntax_entry.get().strip()
     desc = desc_entry.get().strip()
-    
+
     if not cmd or not syntax or not desc:
         messagebox.showwarning("Input Error", "All fields are required!")
         return
-        
+
     with open(DB_FILE, "a") as f:
         f.write(f"{cmd}|{syntax}|{desc}\n")
-        
+
     cmd_entry.delete(0, tk.END)
     syntax_entry.delete(0, tk.END)
     desc_entry.delete(0, tk.END)
-    
+
     # Clear the search bar and reload everything so the new hint is visible
     search_entry.delete(0, tk.END)
     load_hints()
@@ -55,24 +55,25 @@ def delete_hint():
     if not selected_item:
         messagebox.showwarning("Selection Error", "Please select a hint to delete.")
         return
-        
+
     values = tree.item(selected_item[0], "values")
     target_line = f"{values[0]}|{values[1]}|{values[2]}\n"
-    
+
     with open(DB_FILE, "r") as f:
         lines = f.readlines()
-        
+
     with open(DB_FILE, "w") as f:
         for line in lines:
             if line != target_line:
                 f.write(line)
-                
+
     load_hints(search_entry.get())
 
 # Set up the main application window
 root = tk.Tk()
 root.title("Bash Syntax Hinter Manager")
 root.geometry("800x550")
+root.minsize(800, 550)  # Prevents VM window managers from collapsing the window
 
 # --- UI Layout ---
 
@@ -85,7 +86,7 @@ search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
 # Bind every key release to the search_hints function
 search_entry.bind("<KeyRelease>", search_hints)
 
-# Input Frame 
+# Input Frame
 input_frame = tk.Frame(root, pady=10)
 input_frame.pack(fill=tk.X, padx=20)
 
@@ -130,4 +131,12 @@ tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 initial_search = sys.argv[1] if len(sys.argv) > 1 else ""
 search_entry.insert(0, initial_search)
 load_hints(initial_search)
+
+# Force the window manager to map, lift, and display the window
+root.update_idletasks()
+root.deiconify()
+root.lift()
+root.attributes('-topmost', True)
+root.after_idle(root.attributes, '-topmost', False)
+
 root.mainloop()
