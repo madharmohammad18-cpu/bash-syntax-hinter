@@ -18,11 +18,17 @@ else
     echo "⚠️  Existing database found. Skipping overwrite."
 fi
 
-# Inject into .bashrc if not already present
+# Inject tool into .bashrc if not already present
 if ! grep -q "source $USER_LIB_FILE" "$BASHRC_FILE"; then
     echo -e "\n# Load custom bash syntax hinter" >> "$BASHRC_FILE"
     echo "source $USER_LIB_FILE" >> "$BASHRC_FILE"
     echo "✔️  Added tool to .bashrc."
+fi
+
+# Inject Alt+G shortcut if not already present
+if ! grep -q "bash-syntax-hinter/smart_launch.sh" "$BASHRC_FILE"; then
+    echo "bind -x '\"\\eg\": \"$HOME/bash-syntax-hinter/smart_launch.sh\"'" >> "$BASHRC_FILE"
+    echo "✔️  Added Alt+G shortcut to .bashrc."
 fi
 echo "Installing xclip for smart terminal launching..."
 sudo apt-get install -y xclip python3-tk
@@ -35,6 +41,6 @@ gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "[
 gsettings set $KEY_PATH name 'Bash Hinter Smart Launch'
 gsettings set $KEY_PATH command "$HOME/bash-syntax-hinter/smart_launch.sh"
 gsettings set $KEY_PATH binding '<Primary><Alt>h'
-echo "Smart launch hotkey (Ctrl + Alt + H) configured!"
+echo "Smart launch hotkey (Alt + G) configured!"
 echo -e "\e[32mInstallation Complete! Restart terminal to activate.\e[0m"
 
